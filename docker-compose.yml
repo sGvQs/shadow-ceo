@@ -1,0 +1,20 @@
+services:
+  postgres:
+    image: postgres:16
+    container_name: shadow-ceo-db
+    ports:
+      - "5433:5432"  # ローカルは5433ポートを使用
+    environment:
+      POSTGRES_USER: shadow_ceo
+      POSTGRES_PASSWORD: shadow_ceo_dev
+      POSTGRES_DB: shadow_ceo
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U shadow_ceo -d shadow_ceo"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  postgres_data:

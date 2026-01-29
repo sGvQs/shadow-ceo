@@ -1,0 +1,106 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../node_modules/.prisma/client"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ゲームステータス
+enum GameStatus {
+  LOBBY      // ロビー待機中
+  INVESTING  // 投資フェーズ
+  PLAYING    // ゲーム進行中
+  FINISHED   // ゲーム終了
+}
+
+// ランダムボーナスタイプ
+enum RandomBonusType {
+  SHORTEST_ROAD_BONUS   // 道が最短の人に+5BP
+  MOST_RESOURCE_BONUS   // 資源最多保持者に+3BP
+  LEAST_MONEY_BONUS     // 金最少保持者に+4BP
+  MOST_OFFICES_BONUS    // オフィス最多に+3BP
+  RANDOM_PLAYER_BONUS   // ランダム1人に+5BP
+}
+
+// ゲームセッション
+model GameSession {
+  id                  String          @id @default(cuid())
+  code                String          @unique // 参加用コード (6文字)
+  status              GameStatus      @default(LOBBY)
+  currentTurnPlayerId String?
+  boardState          Json            // タイル、警官位置など
+  randomBonusEvent    RandomBonusType?
+  turnOrder           String[]        // プレイヤーIDの順番
+  winnerPlayerId      String?         // 勝者 (ゲーム終了時)
+  devCardDeck         Json            @default("[]") // 指示カードデッキ
+  createdAt           DateTime        @default(now())
+  updatedAt           DateTime        @updatedAt
+
+  players             Player[]
+  gameLog             GameLog[]
+}
+
+// プレイヤー
+model Player {
+  id              String      @id @default(cuid())
+  clerkUserId     String
+  gameId          String
+  displayName     String
+  color           String      // プレイヤーカラー (hex値)
+  
+  // リソース状態 { food, gold, concrete, wood, oil, rareMetal }
+  resourceState   Json        @default("{\"food\":0,\"gold\":0,\"concrete\":0,\"wood\":0,\"oil\":0,\"rareMetal\":0}")
+  
+  businessPoints  Int         @default(0)
+  roads           Json        @default("[]")    // 道の配置
+  offices         Json        @default("[]")    // オフィスの配置
+  devCards        Json        @default("[]")    // 所持指示カード
+  devCardsUsed    Int         @default(0)       // 使用した指示カード数
+  hasPoliceChief  Boolean     @default(false)   // 警察のトップを所持
+  isHost          Boolean     @default(false)
+  isReady         Boolean     @default(false)   // 投資完了フラグ
+  finalMoney      Float?                        // 最終獲得マネー (決算時)
+  createdAt       DateTime    @default(now())
+
+  game                GameSession  @relation(fields: [gameId], references: [id], onDelete: Cascade)
+  investments         Investment[] @relation("Investor")
+  receivedInvestments Investment[] @relation("Target")
+
+  @@unique([gameId, clerkUserId])
+  @@index([gameId])
+  @@index([clerkUserId])
+}
+
+// 投資情報 (ゲーム終了まで本人のみ閲覧可能)
+model Investment {
+  id             String   @id @default(cuid())
+  investorId     String   // 投資した人
+  targetPlayerId String   // 投資された人
+  percentage     Int      // 0-100
+  createdAt      DateTime @default(now())
+
+  investor       Player   @relation("Investor", fields: [investorId], references: [id], onDelete: Cascade)
+  target         Player   @relation("Target", fields: [targetPlayerId], references: [id], onDelete: Cascade)
+
+  @@unique([investorId, targetPlayerId])
+  @@index([investorId])
+  @@index([targetPlayerId])
+}
+
+// ゲームログ
+model GameLog {
+  id        String   @id @default(cuid())
+  gameId    String
+  playerId  String?
+  action    String   // DICE_ROLL, BUILD_ROAD, BUILD_OFFICE, TRADE, COP_MOVE, USE_CARD, etc.
+  data      Json
+  isPublic  Boolean  @default(true) // 全員に表示するかどうか
+  createdAt DateTime @default(now())
+
+  game      GameSession @relation(fields: [gameId], references: [id], onDelete: Cascade)
+
+  @@index([gameId])
+  @@index([gameId, createdAt])
+}
