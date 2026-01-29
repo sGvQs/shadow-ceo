@@ -137,10 +137,10 @@ Turn Logic:
 
 ---
 ## 7. 現在の進捗状況 (Progress)
-- [ ] Prisma Schema の作成と Migrate
-- [ ] Clerk Auth と User同期ロジックの実装
-- [ ] ロビー画面（Group作成）の実装
-- [ ] ゲーム画面（3x3グリッド）の描画
-- [ ] Supabase Realtime 接続とコマの移動同期
+- [x] Prisma Schema の作成と Migrate
+- [x] Clerk Auth と User同期ロジックの実装
+- [x] ロビー画面（Group作成）の実装
+- [x] ゲーム画面（3x3グリッド）の描画
+- [x] Supabase Realtime 接続とコマの移動同期
 - [ ] 投資ロジックの実装
 - [ ] 15ターン終了とリザルト処理

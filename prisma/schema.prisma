@@ -1,0 +1,49 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["driverAdapters"]
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// 1. ユーザーマスタ (Clerkと同期)
+model User {
+  id        String   @id @default(cuid())
+  clerkId   String   @unique
+  name      String
+  imageUrl  String?
+  players   Player[]
+  createdAt DateTime @default(now())
+}
+
+// 2. ゲームセッション
+model Group {
+  id         String   @id @default(cuid())
+  status     String   @default("WAITING") // WAITING, PLAYING, FINISHED
+  turnCount  Int      @default(0) // 最大15ターン
+  maxTurns   Int      @default(15)
+  thiefPos   Int      @default(4) // 0~8 (泥棒の現在地 - 警察には非公開)
+  copPos     Int[]    @default([]) // [2, 5] (警察の現在地 - 全員に公開)
+  footprints Json     @default("[]") // 足跡履歴: [{pos: 3, turn: 5}, ...]
+  lastAction String? // "警察が右下のマスを捜索しました" などのログ
+  players    Player[]
+  createdAt  DateTime @default(now())
+}
+
+// 3. 参加プレイヤー (UserとGroupの中間)
+model Player {
+  id          String  @id @default(cuid())
+  role        String  @default("COP") // COP or THIEF
+  investments Json? // 投資情報: { "targetPlayerId": 100 }
+
+  userId  String
+  user    User   @relation(fields: [userId], references: [id])
+  groupId String
+  group   Group  @relation(fields: [groupId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, groupId])
+}

@@ -1,0 +1,322 @@
+@import "tailwindcss";
+
+/* ========================================
+   Shadow CEO - "Sketch on a Notebook" Theme
+   ======================================== */
+
+:root {
+    /* Base Colors - Notebook Paper */
+    --color-paper: #fdfbf7;
+    --color-paper-dark: #f5f2eb;
+
+    /* Ink Colors - Pencil/Pen style */
+    --color-ink: #4a4a4a;
+    --color-ink-light: #6b6b6b;
+    --color-ink-faint: #9a9a9a;
+
+    /* Accent Colors - Muted tones */
+    --color-thief: #e07a5f;
+    --color-thief-light: #f0a08a;
+    --color-cop: #3d5a80;
+    --color-cop-light: #6d8ab0;
+
+    /* Grid Lines */
+    --color-grid: #e0dcd4;
+    --color-grid-accent: #d0ccc4;
+
+    /* Font */
+    --font-notebook: "Caveat", "Klee One", cursive;
+    --font-body: "Noto Sans JP", system-ui, sans-serif;
+}
+
+/* ========================================
+   Base Styles
+   ======================================== */
+
+* {
+    box-sizing: border-box;
+}
+
+html {
+    font-family: var(--font-body);
+    color: var(--color-ink);
+    background-color: var(--color-paper);
+}
+
+body {
+    min-height: 100dvh;
+    background-color: var(--color-paper);
+    background-image:
+        linear-gradient(var(--color-grid) 1px, transparent 1px),
+        linear-gradient(90deg, var(--color-grid) 1px, transparent 1px);
+    background-size: 24px 24px;
+    background-position: center center;
+}
+
+/* ========================================
+   Notebook Typography
+   ======================================== */
+
+h1,
+h2,
+h3,
+h4 {
+    font-family: var(--font-notebook);
+    font-weight: 700;
+    color: var(--color-ink);
+    letter-spacing: 0.02em;
+}
+
+h1 {
+    font-size: 2.5rem;
+}
+
+h2 {
+    font-size: 2rem;
+}
+
+h3 {
+    font-size: 1.5rem;
+}
+
+/* ========================================
+   Button Styles - Hand-drawn feel
+   ======================================== */
+
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.5rem;
+    font-family: var(--font-notebook);
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--color-paper);
+    background-color: var(--color-ink);
+    border: 2px solid var(--color-ink);
+    border-radius: 4px 12px 4px 12px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    position: relative;
+}
+
+.btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 3px 3px 0 var(--color-ink-light);
+}
+
+.btn:active {
+    transform: translateY(0);
+    box-shadow: none;
+}
+
+.btn-thief {
+    background-color: var(--color-thief);
+    border-color: var(--color-thief);
+}
+
+.btn-thief:hover {
+    box-shadow: 3px 3px 0 var(--color-thief-light);
+}
+
+.btn-cop {
+    background-color: var(--color-cop);
+    border-color: var(--color-cop);
+}
+
+.btn-cop:hover {
+    box-shadow: 3px 3px 0 var(--color-cop-light);
+}
+
+.btn-outline {
+    background-color: transparent;
+    color: var(--color-ink);
+}
+
+.btn-outline:hover {
+    background-color: var(--color-ink);
+    color: var(--color-paper);
+}
+
+/* ========================================
+   Card/Paper Styles
+   ======================================== */
+
+.paper-card {
+    background-color: var(--color-paper);
+    border: 2px solid var(--color-ink-faint);
+    border-radius: 4px 16px 4px 16px;
+    padding: 1.5rem;
+    box-shadow: 4px 4px 0 var(--color-grid-accent);
+    position: relative;
+}
+
+.paper-card::before {
+    content: "";
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    right: 8px;
+    bottom: 8px;
+    border: 1px dashed var(--color-grid-accent);
+    border-radius: 2px 12px 2px 12px;
+    pointer-events: none;
+}
+
+/* ========================================
+   Game Grid Styles
+   ======================================== */
+
+.game-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 4px;
+    background-color: var(--color-ink-faint);
+    padding: 4px;
+    border-radius: 8px;
+    max-width: 320px;
+    aspect-ratio: 1;
+}
+
+.grid-cell {
+    background-color: var(--color-paper);
+    border: 2px solid var(--color-ink-faint);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    position: relative;
+}
+
+.grid-cell:hover {
+    background-color: var(--color-paper-dark);
+    border-color: var(--color-ink-light);
+}
+
+.grid-cell.has-thief::after {
+    content: "🎭";
+    font-size: 2rem;
+}
+
+.grid-cell.has-cop::after {
+    content: "🚔";
+    font-size: 2rem;
+}
+
+.grid-cell.has-footprint::before {
+    content: "👣";
+    font-size: 1rem;
+    position: absolute;
+    bottom: 4px;
+    right: 4px;
+    opacity: 0.5;
+}
+
+/* ========================================
+   Role Badge Styles
+   ======================================== */
+
+.role-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    font-family: var(--font-notebook);
+    font-size: 1rem;
+    font-weight: 600;
+    border-radius: 4px 8px 4px 8px;
+    border: 2px solid currentColor;
+}
+
+.role-badge-thief {
+    color: var(--color-thief);
+    background-color: rgba(224, 122, 95, 0.1);
+}
+
+.role-badge-cop {
+    color: var(--color-cop);
+    background-color: rgba(61, 90, 128, 0.1);
+}
+
+/* ========================================
+   Input Styles
+   ======================================== */
+
+.input {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    font-size: 1rem;
+    color: var(--color-ink);
+    background-color: var(--color-paper);
+    border: 2px solid var(--color-ink-faint);
+    border-radius: 4px 8px 4px 8px;
+    outline: none;
+    transition: border-color 0.2s ease;
+}
+
+.input:focus {
+    border-color: var(--color-ink);
+}
+
+.input::placeholder {
+    color: var(--color-ink-faint);
+}
+
+/* ========================================
+   Loading Animation
+   ======================================== */
+
+@keyframes pencil-write {
+
+    0%,
+    100% {
+        transform: rotate(-5deg);
+    }
+
+    50% {
+        transform: rotate(5deg);
+    }
+}
+
+.loading-pencil {
+    animation: pencil-write 0.5s ease-in-out infinite;
+    display: inline-block;
+}
+
+/* ========================================
+   Utility Classes
+   ======================================== */
+
+.text-thief {
+    color: var(--color-thief);
+}
+
+.text-cop {
+    color: var(--color-cop);
+}
+
+.text-ink {
+    color: var(--color-ink);
+}
+
+.text-ink-light {
+    color: var(--color-ink-light);
+}
+
+.text-ink-faint {
+    color: var(--color-ink-faint);
+}
+
+.bg-paper {
+    background-color: var(--color-paper);
+}
+
+.bg-paper-dark {
+    background-color: var(--color-paper-dark);
+}
+
+.font-notebook {
+    font-family: var(--font-notebook);
+}
