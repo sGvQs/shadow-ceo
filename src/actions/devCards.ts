@@ -2,7 +2,7 @@
 
 import { auth } from '@clerk/nextjs/server';
 import { revalidatePath } from 'next/cache';
-import { prisma } from '@/lib/prisma';
+import { prisma } from '@/lib/db';
 import { addResources, subtractResources } from '@/lib/game/resources';
 import type { ResourceState, ResourceType, DevCard } from '@/types/game';
 
