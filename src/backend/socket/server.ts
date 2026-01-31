@@ -64,6 +64,8 @@ io.use(async (socket: Socket<ClientToServerEvents, ServerToClientEvents, Record<
     try {
         const auth = socket.handshake.auth as SocketAuthData;
 
+        console.log('認証ミドルウェア:', auth);
+
         if (!auth.token) {
             return next(new Error('認証トークンがありません'));
         }
@@ -141,7 +143,7 @@ io.use(async (socket: Socket<ClientToServerEvents, ServerToClientEvents, Record<
         }
 
         // Playerが存在しない場合は作成
-        let player = user.player;
+        let player = (user as any).player;
         if (!player) {
             player = await prisma.player.create({
                 data: {
@@ -154,6 +156,7 @@ io.use(async (socket: Socket<ClientToServerEvents, ServerToClientEvents, Record<
 
         // ソケットにユーザー情報を付与
         socket.data.clerkUserId = clerkUserId;
+        socket.data.userId = user.id; // User ID
         socket.data.playerId = player.id;
         socket.data.playerName = player.displayName || 'Anonymous';
 
@@ -169,7 +172,7 @@ io.use(async (socket: Socket<ClientToServerEvents, ServerToClientEvents, Record<
 // ====================================
 
 io.on('connection', async (socket) => {
-    const { playerId, playerName, clerkUserId } = socket.data;
+    const { playerId, playerName, clerkUserId, userId } = socket.data;
 
     console.log(`[接続] Player: ${playerName} (ID: ${playerId})`);
 
@@ -232,6 +235,7 @@ io.on('connection', async (socket) => {
             const players: PlayerInfo[] = updatedRoom?.players.map((rp) => ({
                 id: rp.player.id,
                 displayName: rp.player.displayName || 'Anonymous',
+                userId: rp.player.userId,
                 clerkUserId: rp.player.clerkUserId,
             })) || [];
 
@@ -244,6 +248,7 @@ io.on('connection', async (socket) => {
                 player: {
                     id: playerId,
                     displayName: playerName,
+                    userId: userId,
                     clerkUserId: clerkUserId,
                 },
             });
@@ -265,6 +270,7 @@ io.on('connection', async (socket) => {
                     content: msg.content,
                     playerId: msg.playerId,
                     playerName: msg.player.displayName || 'Anonymous',
+                    userId: msg.player.userId,
                     clerkUserId: msg.player.clerkUserId,
                     roomId: msg.roomId,
                     createdAt: msg.createdAt.toISOString(),
@@ -348,6 +354,7 @@ io.on('connection', async (socket) => {
                 content: message.content,
                 playerId: message.playerId,
                 playerName: message.player.displayName || 'Anonymous',
+                userId: message.player.userId,
                 clerkUserId: message.player.clerkUserId,
                 roomId: message.roomId,
                 createdAt: message.createdAt.toISOString(),

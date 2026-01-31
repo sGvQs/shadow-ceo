@@ -1,18 +1,19 @@
 'use client';
 
 import { useState } from 'react';
-import { useUser, SignInButton } from '@clerk/nextjs';
+import { SignInButton } from '@clerk/nextjs';
 import { useRouter } from 'next/navigation';
 import { createRoomAction, joinRoomAction } from '@/backend/actions/rooms';
 import { RoomSummary } from '@/backend/services/rooms';
 import styles from '@/app/lobby/page.module.css';
+import { User } from '@prisma/client';
 
 interface LobbyClientProps {
     initialRooms: RoomSummary[];
+    user: User | null;
 }
 
-export default function LobbyClient({ initialRooms }: LobbyClientProps) {
-    const { user, isLoaded } = useUser();
+export default function LobbyClient({ initialRooms, user }: LobbyClientProps) {
     const router = useRouter();
     // サーバーコンポーネントから渡された初期データを使用
     // 更新は router.refresh() で行うため、stateで管理する必要があるかは要検討だが
@@ -76,18 +77,6 @@ export default function LobbyClient({ initialRooms }: LobbyClientProps) {
         }
     };
 
-    // 読み込み中 (Auth)
-    if (!isLoaded) {
-        return (
-            <div className={styles.container}>
-                <div className={styles.loading}>
-                    <div className={styles.spinner} />
-                    <p>読み込み中...</p>
-                </div>
-            </div>
-        );
-    }
-
     // 未認証
     if (!user) {
         return (
@@ -114,7 +103,7 @@ export default function LobbyClient({ initialRooms }: LobbyClientProps) {
                     <span className={styles.subtitle}>ライツ</span>
                 </div>
                 <span className={styles.welcomeText}>
-                    ようこそ、{user.firstName || user.username || 'プレイヤー'}さん
+                    ようこそ、{user.name || 'プレイヤー'}さん
                 </span>
             </header>
 

@@ -17,6 +17,7 @@ export interface RoomInfo {
 export interface PlayerInfo {
   id: number;
   displayName: string;
+  userId: number;
   clerkUserId: string;
 }
 
@@ -26,7 +27,8 @@ export interface ChatMessage {
   content: string;
   playerId: number;
   playerName: string;
-  clerkUserId: string;
+  userId: number;
+  clerkUserId: string; // Added for avatar/identification
   roomId: number;
   createdAt: string;
 }
@@ -59,6 +61,7 @@ export interface SocketAuthData {
 // 接続されたソケットに付与するデータ
 export interface SocketData {
   clerkUserId: string;
+  userId: number; // Added for User ID
   playerId: number;
   playerName: string;
   currentRoomId?: number;
