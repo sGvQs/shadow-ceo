@@ -25,6 +25,13 @@ jobs:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
           DIRECT_URL: ${{ secrets.DIRECT_URL }}
 
+      - name: Recreate Only
+        run: npx prisma migrate resst --force
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          DIRECT_URL: ${{ secrets.DIRECT_URL }}
+          NODE_OPTIONS: "--dns-result-order=ipv4first"
+
       - name: Generate Prisma Client
         run: npx prisma generate
         env:

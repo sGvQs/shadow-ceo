@@ -34,3 +34,41 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+
+## 6. よく使うコマンド
+
+WebSocketサーバーを起動しないと、リアルタイム通信機能（チャットなど）は動作しません。
+開発中は `npm run dev` とは別のターミナルで `npm run socket` を実行してください。
+
+```bash
+# 開発サーバー起動
+npm run dev
+
+# WebSocketサーバー起動（必須：別ターミナルで実行）
+npm run socket
+
+# PostgreSQL起動/停止
+docker compose up -d
+docker compose down
+
+# Prismaスタジオ（DBブラウザ）
+npx prisma studio
+
+# マイグレーションリセット
+npx prisma migrate reset
+
+# マイグレーション作成・適用
+npx prisma migrate dev --name <migration_name>
+
+# スキーマ変更をDBに反映（開発時のみ）
+npx prisma db push
+
+# Prisma Client再生成
+npx prisma generate
+
+# 型チェック
+npx tsc --noEmit
+
+# リント
+npm run lint
+```

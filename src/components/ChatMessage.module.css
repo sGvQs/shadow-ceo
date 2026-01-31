@@ -1,0 +1,68 @@
+/**
+ * ChatMessage コンポーネント用スタイル
+ * Rights風デザイン - 青基調
+ */
+
+.messageContainer {
+    display: flex;
+    flex-direction: column;
+    max-width: 70%;
+    margin-bottom: var(--spacing-md);
+}
+
+.ownMessage {
+    align-self: flex-end;
+    align-items: flex-end;
+}
+
+.otherMessage {
+    align-self: flex-start;
+    align-items: flex-start;
+}
+
+.playerName {
+    font-size: 0.75rem;
+    color: var(--color-text-secondary);
+    margin-bottom: var(--spacing-xs);
+    font-weight: 500;
+}
+
+.messageBubble {
+    padding: var(--spacing-sm) var(--spacing-md);
+    border-radius: var(--radius-lg);
+    position: relative;
+}
+
+.ownMessage .messageBubble {
+    background: var(--color-primary-light);
+    color: var(--color-text-primary);
+    border-bottom-right-radius: var(--radius-sm);
+}
+
+.otherMessage .messageBubble {
+    background: var(--color-surface-card);
+    color: var(--color-text-on-surface);
+    border-bottom-left-radius: var(--radius-sm);
+}
+
+.messageContent {
+    margin: 0;
+    font-size: 0.9375rem;
+    line-height: 1.5;
+    word-wrap: break-word;
+}
+
+.messageTime {
+    display: block;
+    font-size: 0.6875rem;
+    margin-top: var(--spacing-xs);
+    opacity: 0.7;
+}
+
+.ownMessage .messageTime {
+    text-align: right;
+}
+
+.otherMessage .messageTime {
+    text-align: left;
+}

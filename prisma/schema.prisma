@@ -1,49 +1,87 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
-  provider        = "prisma-client-js"
-  previewFeatures = ["driverAdapters"]
+  provider = "prisma-client-js"
 }
 
 datasource db {
   provider = "postgresql"
 }
 
-// 1. ユーザーマスタ (Clerkと同期)
+// ====================================
+// 認証ユーザー（Clerkと連携）
+// ====================================
 model User {
-  id        String   @id @default(cuid())
-  clerkId   String   @unique
-  name      String
-  imageUrl  String?
-  players   Player[]
-  createdAt DateTime @default(now())
+  id        Int       @id @default(autoincrement())
+  email     String    @unique
+  name      String?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  userIdp   UserIdp?
+  player    Player?
 }
 
-// 2. ゲームセッション
-model Group {
-  id         String   @id @default(cuid())
-  status     String   @default("WAITING") // WAITING, PLAYING, FINISHED
-  turnCount  Int      @default(0) // 最大15ターン
-  maxTurns   Int      @default(15)
-  thiefPos   Int      @default(4) // 0~8 (泥棒の現在地 - 警察には非公開)
-  copPos     Int[]    @default([]) // [2, 5] (警察の現在地 - 全員に公開)
-  footprints Json     @default("[]") // 足跡履歴: [{pos: 3, turn: 5}, ...]
-  lastAction String? // "警察が右下のマスを捜索しました" などのログ
-  players    Player[]
-  createdAt  DateTime @default(now())
+// ====================================
+// Clerk IdP 連携テーブル
+// ====================================
+model UserIdp {
+  id          Int    @id @default(autoincrement())
+  clerkUserId String @unique
+  user        User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId      Int    @unique
 }
 
-// 3. 参加プレイヤー (UserとGroupの中間)
+// ====================================
+// ゲーム内プレイヤー実体
+// ====================================
 model Player {
-  id          String  @id @default(cuid())
-  role        String  @default("COP") // COP or THIEF
-  investments Json? // 投資情報: { "targetPlayerId": 100 }
+  id          Int          @id @default(autoincrement())
+  clerkUserId String       @unique
+  displayName String?
+  user        User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId      Int          @unique
+  messages    Message[]
+  roomPlayers RoomPlayer[]
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+}
 
-  userId  String
-  user    User   @relation(fields: [userId], references: [id])
-  groupId String
-  group   Group  @relation(fields: [groupId], references: [id], onDelete: Cascade)
+// ====================================
+// チャットルーム
+// ====================================
+model Room {
+  id         Int          @id @default(autoincrement())
+  name       String
+  code       String       @unique // 参加用コード (6文字)
+  maxPlayers Int          @default(5)
+  isActive   Boolean      @default(true)
+  createdAt  DateTime     @default(now())
+  updatedAt  DateTime     @updatedAt
+  messages   Message[]
+  players    RoomPlayer[]
+}
 
-  @@unique([userId, groupId])
+// ====================================
+// ルーム参加者
+// ====================================
+model RoomPlayer {
+  id       Int      @id @default(autoincrement())
+  room     Room     @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  roomId   Int
+  player   Player   @relation(fields: [playerId], references: [id], onDelete: Cascade)
+  playerId Int
+  joinedAt DateTime @default(now())
+
+  @@unique([roomId, playerId])
+}
+
+// ====================================
+// チャットメッセージ
+// ====================================
+model Message {
+  id        Int      @id @default(autoincrement())
+  content   String
+  player    Player   @relation(fields: [playerId], references: [id], onDelete: Cascade)
+  playerId  Int
+  room      Room     @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  roomId    Int
+  createdAt DateTime @default(now())
 }
