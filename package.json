@@ -8,7 +8,7 @@
     "start": "next start",
     "lint": "eslint",
     "postinstall": "prisma generate",
-    "socket": "tsx src/backend/socket/server.ts",
+    "socket": "tsx watch src/backend/socket/server.ts",
     "dev:all": "concurrently \"npm run dev\" \"npm run socket\""
   },
   "dependencies": {

@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState, useCallback } from 'react';
-import { SignInButton } from '@clerk/nextjs';
+import { SignInButton, useAuth } from '@clerk/nextjs';
 import { useParams, useRouter } from 'next/navigation';
 import { io, Socket } from 'socket.io-client';
 import type {
@@ -26,6 +26,7 @@ interface ChatClientProps {
 
 export default function ChatClient({ user, roomId }: ChatClientProps) {
     const router = useRouter();
+    const { getToken } = useAuth();
 
     const socketRef = useRef<TypedSocket | null>(null);
     const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -50,8 +51,12 @@ export default function ChatClient({ user, roomId }: ChatClientProps) {
 
         const connectSocket = async () => {
             try {
+                const token = await getToken();
                 const socket: TypedSocket = io(SOCKET_URL, {
                     transports: ['websocket', 'polling'],
+                    auth: {
+                        token,
+                    },
                 });
 
                 socketRef.current = socket;

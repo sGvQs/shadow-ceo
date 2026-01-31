@@ -70,14 +70,14 @@ io.use(async (socket: Socket<ClientToServerEvents, ServerToClientEvents, Record<
             return next(new Error('認証トークンがありません'));
         }
 
-        // Clerkトークンを検証（JWT手動検証）
-        const publishableKey = process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY || '';
-        const clerkDomain = publishableKey.includes('pk_test_')
-            ? publishableKey.replace('pk_test_', '').replace(/=+$/, '')
-            : publishableKey.replace('pk_live_', '').replace(/=+$/, '');
+        // トークンからissuerを取得するためにデコード（検証なし）
+        const decodedUntrusted = jwt.decode(auth.token) as JwtPayload;
 
-        const decodedDomain = Buffer.from(clerkDomain, 'base64').toString('utf-8');
-        const issuer = `https://${decodedDomain}`;
+        if (!decodedUntrusted || !decodedUntrusted.iss) {
+            return next(new Error('無効なトークン形式です'));
+        }
+
+        const issuer = decodedUntrusted.iss;
 
         const client = jwksClient({
             jwksUri: `${issuer}/.well-known/jwks.json`,
