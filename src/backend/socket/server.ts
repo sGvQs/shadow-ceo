@@ -17,7 +17,7 @@ import type {
     SocketData,
     ChatMessage,
     PlayerInfo,
-} from '../types/socket';
+} from '../../shared/types/socket';
 import { Pool } from 'pg';
 import { PrismaPg } from '@prisma/adapter-pg';
 

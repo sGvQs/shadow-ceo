@@ -3,7 +3,7 @@
  * 個々のチャットメッセージを表示
  */
 
-import type { ChatMessage as ChatMessageType } from '@/types/socket';
+import type { ChatMessage as ChatMessageType } from '@/shared/types/socket';
 import styles from './ChatMessage.module.css';
 
 interface ChatMessageProps {

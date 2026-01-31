@@ -15,9 +15,9 @@ import type {
     ServerToClientEvents,
     ChatMessage,
     PlayerInfo,
-} from '@/types/socket';
-import { ChatMessage as ChatMessageComponent } from '@/components/ChatMessage';
-import { ChatInput } from '@/components/ChatInput';
+} from '@/shared/types/socket';
+import { ChatMessage as ChatMessageComponent } from '@/frontend/components/ChatMessage';
+import { ChatInput } from '@/frontend/components/ChatInput';
 import styles from './page.module.css';
 
 type TypedSocket = Socket<ServerToClientEvents, ClientToServerEvents>;

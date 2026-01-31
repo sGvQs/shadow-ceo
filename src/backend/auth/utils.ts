@@ -1,6 +1,6 @@
 
 import { auth, currentUser } from "@clerk/nextjs/server";
-import { prisma } from "@/server/db/db";
+import { prisma } from "@/backend/db/client";
 import { cache } from "react";
 import { PrismaClient, Prisma } from "@prisma/client";
 
