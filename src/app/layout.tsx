@@ -4,7 +4,7 @@
  */
 
 import type { Metadata } from 'next';
-import { ClerkProvider, SignedIn, SignedOut } from '@clerk/nextjs';
+import { ClerkProvider, SignedIn, SignedOut, UserButton } from '@clerk/nextjs';
 import './globals.css';
 
 export const metadata: Metadata = {
@@ -22,9 +22,11 @@ export default function RootLayout({
             <html lang="ja">
                 <body>
                     <SignedOut>
+                        <UserButton />
                         {children}
                     </SignedOut>
                     <SignedIn>
+                        <UserButton />
                         {children}
                     </SignedIn>
                 </body>
